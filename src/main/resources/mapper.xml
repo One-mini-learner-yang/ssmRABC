@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 设置为IUserDao接口方法提供sql语句配置 -->
+<mapper namespace="Project.DAO.daoMapper">
+<!--   测试环境代码 <insert id="add" parameterType="Project.Employee">-->
+<!--        insert into tbl_employee values (#{id},#{lastName},#{email},#{gender})-->
+<!--    </insert>-->
+    <select id="Verify" resultType="java.lang.String">
+        select u.password from user u where u.username=#{username}
+    </select>
+    <select id="userSelect" resultType="Project.c_user">
+        select * from c_user
+         <where>
+             <if test="findIndex!=null">
+                 username like concat("%",#{findIndex},"%")
+             </if>
+         </where>
+         order by c_time desc
+         limit #{pageStart},#{pageSize}
+    </select>
+    <select id="roleSelect" resultType="Project.role">
+        select * from role
+        <where>
+            <if test="findIndex!=null">
+                name like concat("%",#{findIndex},"%")
+            </if>
+        </where>
+        limit #{pageStart},#{pageSize}
+    </select>
+    <select id="userTotal" resultType="int">
+        select count(*) from c_user
+    </select>
+    <select id="roleTotal" resultType="int">
+        select count(*) from role
+    </select>
+    <select id="updateQuery" resultType="Project.c_user">
+        select * from c_user where id=#{id}
+    </select>
+    <select id="queryAllRole" resultType="Project.role">
+        select * from role
+    </select>
+    <select id="roleIdSelect" resultType="java.lang.Integer">
+        select roleId from user_role where userid=#{userId}
+    </select>
+    <select id="permissionSelect" resultType="Project.permission">
+        select * from permission
+    </select>
+    <insert id="add">
+        insert into c_user (username,name,email,c_time) values (#{username},#{name},#{email},#{time})
+    </insert>
+    <insert id="addUser">
+        insert into user (username,password) values (#{username},#{password})
+    </insert>
+    <insert id="addRole">
+        insert into role (name) values (#{name})
+    </insert>
+    <insert id="assignRole">
+        insert into user_role (userid,roleid) values (#{userId},#{roleId})
+    </insert>
+    <update id="update">
+        update  c_user set username=#{username},name=#{name},email=#{email} where id=#{id}
+    </update>
+    <update id="updateUser">
+        update  user set username=#{username},password=#{password} where id=#{id}
+    </update>
+    <delete id="deleteById">
+        delete from c_user where id=#{id}
+    </delete>
+    <delete id="deleteUserById">
+        delete from user where id=#{id}
+    </delete>
+    <delete id="unAssignRole">
+        delete from user_role where userid=#{userId} and roleid=#{roleId}
+    </delete>
+    <delete id="deleteSome">
+        delete from c_user
+        <where>
+            id in
+            <foreach collection="list" item="id" separator="," open="(" close=")">
+                #{id}
+            </foreach>
+        </where>
+    </delete>
+    <delete id="deleteSomeUser">
+        delete from user
+        <where>
+            id in
+            <foreach collection="list" item="id" separator="," open="(" close=")">
+                #{id}
+            </foreach>
+        </where>
+    </delete>
+</mapper>
